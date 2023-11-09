@@ -4,8 +4,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'boxes/boxes.dart';
 import 'models/notes_model.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -22,12 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Color> colors = [Colors.purple , Colors.black38, Colors.green, Colors.blue , Colors.red] ;
 
   Random random = Random(5);
-  final ValueNotifier<Box<NotesModel>> _boxNotifier = ValueNotifier<Box<NotesModel>>(Boxes.getData());
-  @override
-  void dispose() {
-    _boxNotifier.dispose();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Hive Database'),
       ),
       body: ValueListenableBuilder<Box<NotesModel>>(
-        valueListenable: _boxNotifier,
+        valueListenable: Boxes.getData().listenable(),
         builder: (context,box ,_){
           var data = box.values.toList();
+
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -61,29 +59,31 @@ class _HomeScreenState extends State<HomeScreen> {
                               Row(
                                 children: [
                                   Text(data[index].title.toString() ,
-                                    style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w500 , color: Colors.white),),
-                                  Spacer(),
+                                    style: const TextStyle(fontSize: 20 , fontWeight: FontWeight.w500 , color: Colors.white),),
+                                  const Spacer(),
                                   InkWell(
                                       onTap: (){
                                         delete(data[index]);
                                       },
-                                      child: Icon(Icons.delete , color: Colors.white,)),
-                                  SizedBox(width: 15,),
+                                      child: const Icon(Icons.delete , color: Colors.white,)),
+                                  const SizedBox(width: 15,),
                                   InkWell(
                                       onTap: (){
                                         _editDialog(data[index], data[index].title.toString(), data[index].description.toString());
                                       },
-                                      child: Icon(Icons.edit, color: Colors.white,)) ,
+                                      child: const Icon(Icons.edit, color: Colors.white,)) ,
+
 
                                 ],
                               ),
                               Text(data[index].description.toString(),
-                                style: TextStyle(fontSize: 18 , fontWeight: FontWeight.w300, color: Colors.white),),
+                                style: const TextStyle(fontSize: 18 , fontWeight: FontWeight.w300, color: Colors.white),),
                             ],
                           ),
                         ),
                       ),
                     );
+
                   }
               ),
             );
@@ -95,13 +95,15 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: ()async{
           _showMyDialog();
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
 
   void delete(NotesModel notesModel)async{
     await notesModel.delete() ;
+    await notesModel.save();
+
   }
 
 
@@ -167,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder:(context){
           return AlertDialog(
-            title: Text('Add NOTES'),
+            title: const Text('Add NOTES'),
             content: SingleChildScrollView(
               child: Column(
                 children: [
@@ -201,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final box = Boxes.getData();
                 box.add(data);
 
+
                 // data.save() ;
 
                 titleController.clear();
@@ -209,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // box.
 
                 Navigator.pop(context);
-              }, child: Text('Add')),
+              }, child: const Text('Add')),
             ],
           );
         }

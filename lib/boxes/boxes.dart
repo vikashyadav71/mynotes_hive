@@ -9,6 +9,6 @@ import '../models/notes_model.dart';
 class Boxes {
 
   static Box<NotesModel> getData() => Hive.box<NotesModel>('notes');
-  //static kaam ka ho sakta hai
+  //static values only be accces
 
 }
